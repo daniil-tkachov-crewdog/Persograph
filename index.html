@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Persograph</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app" class="theme-light">
+    <aside class="sidebar">
+      <h1>Persograph</h1>
+      <p class="subtitle">Personal networking sociograph</p>
+
+      <div class="panel">
+        <button id="addHumanBtn">Add a Human</button>
+        <button id="deleteHumanBtn" class="danger">Delete Human</button>
+      </div>
+
+      <div class="panel">
+        <label for="searchInput">Search for Human</label>
+        <input id="searchInput" type="text" placeholder="Name, location, job, tags..." />
+        <button id="searchBtn">Find</button>
+      </div>
+
+      <div class="panel">
+        <button id="addConnectionBtn">Add connection</button>
+        <button id="pathBtn">Find shortest path</button>
+      </div>
+
+      <div class="panel">
+        <button id="undoBtn">Undo</button>
+        <button id="redoBtn">Redo</button>
+      </div>
+
+      <div class="panel two-col">
+        <button id="exportBtn">Export JSON</button>
+        <label class="upload">Import JSON
+          <input id="importInput" type="file" accept="application/json" />
+        </label>
+      </div>
+
+      <div class="panel two-col">
+        <button id="themeBtn">Dark/Light</button>
+        <button id="gridBtn">Grid: On</button>
+      </div>
+
+      <div class="panel">
+        <label for="focusToggle">Focus mode</label>
+        <input id="focusToggle" type="checkbox" />
+
+        <label for="degreeFilter">Degree filter (0 = all)</label>
+        <input id="degreeFilter" type="range" min="0" max="3" value="0" />
+        <div id="degreeLabel">0</div>
+      </div>
+
+      <div class="panel">
+        <button id="resetViewBtn">Reset view</button>
+        <div class="legend">
+          <div><span class="swatch family"></span> Family</div>
+          <div><span class="swatch friends"></span> Friends</div>
+          <div><span class="swatch work"></span> Work</div>
+          <div><span class="swatch hobbies"></span> Hobbies</div>
+          <div><span class="swatch enemies"></span> Enemies</div>
+        </div>
+      </div>
+
+      <div class="panel small-note">
+        Node <strong>[000-000]</strong> is you and cannot be deleted or moved.
+      </div>
+    </aside>
+
+    <main class="graph-area">
+      <canvas id="graphCanvas"></canvas>
+      <canvas id="miniMap" class="hidden"></canvas>
+      <div id="tooltip" class="tooltip hidden"></div>
+    </main>
+  </div>
+
+  <dialog id="nodeModal">
+    <form id="nodeForm" method="dialog">
+      <h2>Human details</h2>
+      <input type="hidden" id="nodeId" />
+
+      <label>Node number</label>
+      <input id="nodeNumber" type="text" disabled />
+
+      <label>Name</label>
+      <input id="nodeName" type="text" required />
+
+      <label>Location</label>
+      <input id="nodeLocation" type="text" />
+
+      <label>Job title</label>
+      <input id="nodeJob" type="text" />
+
+      <label>Telegram</label>
+      <input id="nodeTelegram" type="text" />
+
+      <label>Instagram</label>
+      <input id="nodeInstagram" type="text" />
+
+      <label>LinkedIn</label>
+      <input id="nodeLinkedIn" type="text" />
+
+      <label>Twitter</label>
+      <input id="nodeTwitter" type="text" />
+
+      <label>Tags (comma separated)</label>
+      <input id="nodeTags" type="text" />
+
+      <label>Priority</label>
+      <select id="nodePriority">
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+      </select>
+
+      <label>Short description</label>
+      <textarea id="nodeDescription" maxlength="1200"></textarea>
+
+      <label>Last activity</label>
+      <textarea id="nodeLastActivity" maxlength="1200"></textarea>
+
+      <div id="degreeInfo" class="degree-info"></div>
+      <div id="timestamps" class="timestamps"></div>
+
+      <menu>
+        <button type="button" id="closeNodeModal">Cancel</button>
+        <button type="submit" id="saveNodeBtn">Save</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <dialog id="edgeModal">
+    <form id="edgeForm" method="dialog">
+      <h2>Connection</h2>
+      <input type="hidden" id="edgeId" />
+
+      <label>Person A</label>
+      <select id="edgeNodeA"></select>
+
+      <label>Person B</label>
+      <select id="edgeNodeB"></select>
+
+      <label>Relation types (multi-select)</label>
+      <select id="edgeTypes" multiple size="5">
+        <option value="family">Family</option>
+        <option value="friends">Friends</option>
+        <option value="work">Colleagues / Work</option>
+        <option value="hobbies">Hobbies</option>
+        <option value="enemies">Enemies</option>
+      </select>
+
+      <label>Shape / dominance</label>
+      <select id="edgeDirection">
+        <option value="directed">A ➜ B (B depends on A)</option>
+        <option value="bidirectional">A ⇄ B</option>
+        <option value="undirected">Dotted (known, no dominance)</option>
+      </select>
+
+      <menu>
+        <button type="button" id="deleteEdgeBtn" class="danger">Delete</button>
+        <button type="button" id="closeEdgeModal">Cancel</button>
+        <button type="submit">Save</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <dialog id="pathModal">
+    <form id="pathForm" method="dialog">
+      <h2>Shortest path</h2>
+      <label>From</label>
+      <select id="pathFrom"></select>
+      <label>To</label>
+      <select id="pathTo"></select>
+      <div id="pathResult"></div>
+      <menu>
+        <button type="button" id="closePathModal">Close</button>
+        <button type="submit">Find</button>
+      </menu>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
